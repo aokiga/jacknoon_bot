@@ -1,0 +1,2 @@
+ssh aokiga@185.246.153.37 -p 443 -D 8123 -C -q -N
+TOKEN=665232622:AAEz7JBXZ9SzE7AJx-e1sLQeJdhfisDoXU8 PROXY=socks5://127.0.0.1:8123 python3 bot.py

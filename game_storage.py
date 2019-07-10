@@ -1,0 +1,1 @@
+game_storage = dict()
