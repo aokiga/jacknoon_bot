@@ -1,4 +1,4 @@
-from bot import bot
+from bot_init import bot
 from user_storage import user_storage as users
 from room_storage import room_storage as rooms
 

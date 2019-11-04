@@ -1,4 +1,3 @@
-import telebot
 import helper
 from room_storage import room_storage as rooms
 from user_storage import user_storage as users
@@ -7,7 +6,7 @@ from room import Room
 
 class CommandHandler:
 
-    def __init__(self, bot: telebot.TeleBot):
+    def __init__(self, bot):
         self.bot = bot
 
     def start(self, message):

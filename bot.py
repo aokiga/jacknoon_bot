@@ -1,14 +1,8 @@
-import master_info
-import telebot
+from bot_init import bot
 import command_handler
 import decorators
 from user_storage import user_storage as users
 from room_storage import room_storage as rooms
-
-TOKEN = master_info.TOKEN
-PROXY = 'socks5h://telegram:telegram@ogyom.tgvpnproxy.me:1080'
-telebot.apihelper.proxy = {'https': PROXY}
-bot = telebot.TeleBot(TOKEN)
 
 CommandHandler = command_handler.CommandHandler(bot)
 
