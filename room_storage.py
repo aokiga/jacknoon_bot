@@ -1,0 +1,1 @@
+room_storage = dict()

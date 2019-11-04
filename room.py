@@ -1,27 +1,26 @@
-from user_storage import *
+from room_storage import room_storage as rooms
+from user_storage import user_storage as users
 
-import abc
 
+class Room:
 
-class Game:
-
-    def __init__(self, game_id):
+    def __init__(self, room_id):
         self.players = set()
         self.state = 0
-        self.id = game_id
+        self.id = room_id
 
     def add_player(self, player_id):
         self.players.add(player_id)
-        user_storage[player_id] = -self.id
+        users[player_id] = -self.id
 
     def remove_player(self, player_id):
         self.players.discard(player_id)
-        user_storage[player_id] = 0
+        users[player_id] = 0
 
     def start_game(self):
         self.state = 1
         for player in self.players:
-            user_storage[player] = self.id
+            users[player] = self.id
 
     def play_game(self):
         self.start_game()
@@ -33,4 +32,4 @@ class Game:
         self.id = 0
 
     def empty(self):
-        return not players
+        return not self.players

@@ -1,63 +1,69 @@
-import os
+import master_info
 import telebot
 import command_handler
-from user_storage import user_storage
-from game_storage import game_storage
+from user_storage import user_storage as users
+from room_storage import room_storage as rooms
 
-bot = telebot.TeleBot(os.getenv('TOKEN'))
-telebot.apihelper.proxy = {'https': os.getenv('PROXY')}
+TOKEN = master_info.TOKEN
+PROXY = 'socks5h://telegram:telegram@ogyom.tgvpnproxy.me:1080'
+bot = telebot.TeleBot(TOKEN)
+telebot.apihelper.proxy = {'https': PROXY}
+
+CommandHandler = command_handler.CommandHandler(bot)
 
 
 @bot.message_handler(commands=['start'])
 def start(message):
     player_id = message.from_user.id
-    if player_id in user_storage:
-        return
-    user_storage[player_id] = 0
-    bot.send_message(chat_id=message.chat.id, text='Добро пожаловать в симулятор игры Jackbox Party Box.')
+    if player_id not in users:
+        users[player_id] = 0
+        CommandHandler.start(message)
+    help_handler(message)
 
 
-@bot.message_handler(commands=['create_game'])
+@bot.message_handler(commands=['help'])
+def help_handler(message):
+    CommandHandler.help(message)
+
+
+@bot.message_handler(commands=['create_room'])
 def create_game(message):
     player_id = message.from_user.id
 
-    if player_id not in user_storage:
-        bot.send_message(chat_id=message.chat.id, text='Вы еще даже не ввели /start =(((((.')
+    if player_id not in users:
+        bot.send_message(chat_id=message.chat.id, text='Введите /start')
         return
 
-    if user_storage[player_id]:
-        bot.send_message(chat_id=message.chat.id, text='Вы уже находитесь в игре.')
+    if users[player_id] != 0:
+        bot.send_message(chat_id=message.chat.id, text='Вы уже находитесь в лобби. Сначала покиньте лобби.')
         return
 
-    game_id = сommand_handler.create_game()
-    bot.send_message(chat_id=message.chat.id, text='Игра создана.\nКлюч игры - ' + str(game_id))
-    command_handler.connect(player_id, game_id)
+    CommandHandler.create_room(message)
 
 
-@bot.message_handler(commands=['connect'])
+@bot.message_handler(commands=['enter_room'])
 def connect(message):
     player_id = message.from_user.id
     
-    if player_id not in user_storage:
-        bot.send_message(chat_id=message.chat.id, text='Вы еще даже не ввели /start =(((((.')
+    if player_id not in users:
+        bot.send_message(chat_id=message.chat.id, text='Введите /start.')
         return
 
-    if user_storage[player_id] != 0:
-        bot.send_message(chat_id=message.chat.id, text='Вы уже находитесь в игре. Сначала покиньте игру.')
+    if users[player_id] != 0:
+        bot.send_message(chat_id=message.chat.id, text='Вы уже находитесь в комнаты. Сначала покиньте комнату.')
         return
 
-    game_id = 0
+    bot.send_message(chat_id=message.chat.id, text='Введите id комнаты.')
+    room_id = bot.get_updates(limit=1, allowed_updates=['message'])[0]
 
-    bot.send_message(chat_id=message.chat.id, text='Введите ключ комнаты.')
-    game_id = bot.get_updates(limit=1, allowed_updates=["message"])[0]
-
-    if game_id not in game_storage[player_id]:
-        bot.send_message(chat_id=message.chat.id, text='Игры с таким ключом не существует.')
+    if room_id not in rooms:
+        bot.send_message(chat_id=message.chat.id, text='Комнаты с таким id не существует.')
         return
 
-    сommand_handler.connect(player_id, game_id)
+    CommandHandler.find_room(message, room_id)
 
 
+'''
 @bot.message_handler(commands=['disconnect'])
 def disconnect(message):
     player_id = message.from_user.id
@@ -89,8 +95,10 @@ def start_game(message):
         bot.send_message(chat_id=message.chat.id, text='Вы не находитесь в зале ожидания.')
         return
 
-    сommand_handler.start_game(-user_storage[player_id])
-
+    сommand_handler.start_game(-user_storage[player_id])ч
+'''
 
 if __name__ == '__main__':
-    bot.polling()
+    running = True
+    while running:
+        bot.polling(none_stop=True)
