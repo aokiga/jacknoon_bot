@@ -13,10 +13,9 @@ CommandHandler = command_handler.CommandHandler(bot)
 @decorators.for_unregistered_users
 def start(message):
     player_id = message.from_user.id
-    if player_id not in users_state:
-        users_state[player_id] = UserState.MAIN_MENU
-        users_room[player_id] = 0
-        CommandHandler.start(message)
+    users_state[player_id] = UserState.MAIN_MENU
+    users_room[player_id] = 0
+    CommandHandler.start(message)
     help_handler(message)
 
 
@@ -31,14 +30,15 @@ def help_handler(message):
 @decorators.for_free_users
 def create_game(message):
     CommandHandler.create_room(message)
+    help_handler(message)
 
 
 @bot.message_handler(commands=['enter_room'])
 @decorators.for_existing_users
 @decorators.for_free_users
 def connect(message):
-    bot.send_message(chat_id=message.chat.id, text='Введите id комнаты.')
     users_state[message.from_user.id] = UserState.WAITING_FOR_ROOM_ID
+    help_handler(message)
 
 
 @decorators.for_existing_users
@@ -50,6 +50,7 @@ def enter_room_id(message):
         users_state[message.from_user.id] = UserState.MAIN_MENU
         return
     CommandHandler.find_room(message, room_id)
+    help_handler(message)
 
 
 @bot.message_handler(commands=['leave_room'])
@@ -57,6 +58,7 @@ def enter_room_id(message):
 @decorators.for_busy_users
 def leave_room(message):
     CommandHandler.leave_room(message)
+    help_handler(message)
 
 
 if __name__ == '__main__':

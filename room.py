@@ -15,7 +15,7 @@ class Room:
     def info(self):
         s = 'Количество игроков: ' + str(len(self.players)) + '\n'
         for player in self.players.values():
-            s += '@' + player.username
+            s += '@' + player.username + '\n'
         return s
 
     def update_status(self):
