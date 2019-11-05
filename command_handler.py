@@ -14,7 +14,7 @@ class CommandHandler:
 
     def find_room(self, message, room_id):
         bot_message = self.bot.send_message(chat_id=message.chat.id, text='Вы вошли в комнату ' + str(room_id) +
-                                                                          + '\n' + rooms[room_id].info())
+                                                                          '\n' + rooms[room_id].info())
         rooms[room_id].add_player(message.from_user, bot_message, room_id)
 
     def create_room(self, message):

@@ -35,7 +35,7 @@ def create_game(message):
 @decorators.for_free_users
 def connect(message):
     bot.send_message(chat_id=message.chat.id, text='Введите id комнаты.')
-    room_id = bot.get_updates(limit=1, allowed_updates=['message'])[0]
+    room_id = bot.get_updates(limit=1, allowed_updates=['message'])[0].message.text
 
     if room_id not in rooms:
         bot.send_message(chat_id=message.chat.id, text='Комнаты с таким id не существует.')
@@ -54,4 +54,4 @@ def leave_room(message):
 if __name__ == '__main__':
     running = True
     while running:
-        bot.polling(none_stop=True)
+        bot.polling(none_stop=False)

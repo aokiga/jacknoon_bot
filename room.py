@@ -19,7 +19,7 @@ class Room:
 
     def update_status(self):
         new_text = self.info()
-        for c_id, m_id in self.status_messages:
+        for c_id, m_id in self.status_messages.values():
             bot.edit_message_text(text=new_text, chat_id=c_id, message_id=m_id)
 
     def add_player(self, player, message, game_id):
@@ -35,9 +35,11 @@ class Room:
         self.update_status()
 
     def close_game(self):
-        players = self.players.keys()
-        for player in players:
-            self.remove_player(player)
+        while len(self.players) != 0:
+            player_id, info = self.status_messages.popitem()
+            self.players.pop(player_id)
+            users[player_id] = 0
+            bot.send_message(chat_id=info[0], text='Вы были кикнуты из комнаты, так как она была уничтожена.')
 
     def empty(self):
         return not self.players

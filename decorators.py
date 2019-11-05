@@ -9,7 +9,7 @@ def for_existing_users(func):
         if user_id not in users:
             bot.send_message(chat_id=message.chat.id, text='Введите /start')
             return
-        func()
+        func(message)
     return wrapped_handler
 
 
@@ -19,15 +19,15 @@ def for_free_users(func):
         if users[user_id] != 0:
             bot.send_message(chat_id=message.chat.id, text='Вы уже находитесь в комнате. Сначала покиньте комнату.')
             return
-        func()
+        func(message)
     return wrapped_handler
 
 
 def for_busy_users(func):
     def wrapped_handler(message):
         user_id = message.from_user.id
-        if users[user_id] != 0:
+        if users[user_id] == 0:
             bot.send_message(chat_id=message.chat.id, text='Вы не находитесь ни в какой комнате.')
             return
-        func()
+        func(message)
     return wrapped_handler
