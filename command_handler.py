@@ -1,6 +1,6 @@
 import helper
 from room_storage import room_storage as rooms
-from user_storage import user_storage as users
+from user_storage import users_room, users_state
 from room import Room
 
 
@@ -25,10 +25,13 @@ class CommandHandler:
 
     def leave_room(self, message):
         player_id = message.from_user.id
-        room_id = users[player_id]
+        room_id = users_room[player_id]
         if rooms[room_id].owner != player_id:
             rooms[room_id].remove_player(player_id)
         else:
             rooms[room_id].close_game()
             rooms.pop(room_id)
         self.bot.send_message(chat_id=message.chat.id, text='Вы вышли в главное меню\n')
+
+    def help(self, message):
+        self.bot.send_message(chat_id=message.chat.id, text=helper.helper[users_state[message.from_user.id]])

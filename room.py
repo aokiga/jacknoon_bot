@@ -1,5 +1,6 @@
 from bot_init import bot
-from user_storage import user_storage as users
+from user_storage import users_room, users_state
+from userState import UserState
 
 
 class Room:
@@ -14,7 +15,7 @@ class Room:
     def info(self):
         s = 'Количество игроков: ' + str(len(self.players)) + '\n'
         for player in self.players.values():
-            s += player.username
+            s += '@' + player.username
         return s
 
     def update_status(self):
@@ -25,20 +26,23 @@ class Room:
     def add_player(self, player, message, game_id):
         self.players.update([(player.id, player)])
         self.status_messages.update([(player.id, (message.chat.id, message.message_id))])
-        users[player.id] = game_id
+        users_room[player.id] = game_id
+        users_state[player.id] = UserState.ROOM
         self.update_status()
 
     def remove_player(self, player_id):
         self.players.pop(player_id)
         self.status_messages.pop(player_id)
-        users[player_id] = 0
+        users_room[player_id] = 0
+        users_state[player_id] = UserState.MAIN_MENU
         self.update_status()
 
     def close_game(self):
         while len(self.players) != 0:
             player_id, info = self.status_messages.popitem()
             self.players.pop(player_id)
-            users[player_id] = 0
+            users_room[player_id] = 0
+            users_state[player_id] = UserState.MAIN_MENU
             bot.send_message(chat_id=info[0], text='Вы были кикнуты из комнаты, так как она была уничтожена.')
 
     def empty(self):

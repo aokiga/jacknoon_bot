@@ -1,1 +1,2 @@
-user_storage = dict()
+users_room = dict()
+users_state = dict()
