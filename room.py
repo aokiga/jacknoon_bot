@@ -34,7 +34,7 @@ class Room:
         users[player_id] = 0
         self.update_status()
 
-    def __del__(self):
+    def close_game(self):
         players = self.players.keys()
         for player in players:
             self.remove_player(player)

@@ -29,6 +29,6 @@ class CommandHandler:
         if rooms[room_id].owner != player_id:
             rooms[room_id].remove_player(player_id)
         else:
-            rooms[room_id].__del__()
+            rooms[room_id].close_game()
             rooms.pop(room_id)
         self.bot.send_message(chat_id=message.chat.id, text='Вы вышли в главное меню\n')
