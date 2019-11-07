@@ -48,6 +48,7 @@ def enter_room_id(message):
     if room_id not in rooms:
         bot.send_message(chat_id=message.chat.id, text='Комнаты с таким id не существует.')
         users_state[message.from_user.id] = UserState.MAIN_MENU
+        help_handler(message)
         return
     CommandHandler.find_room(message, room_id)
     help_handler(message)

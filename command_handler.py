@@ -2,6 +2,7 @@ import helper
 from room_storage import room_storage as rooms
 from user_storage import users_room, users_state
 from room import Room
+from keyboards import keyboards
 
 
 class CommandHandler:
@@ -34,4 +35,7 @@ class CommandHandler:
         self.bot.send_message(chat_id=message.chat.id, text='Вы вышли в главное меню\n')
 
     def help(self, message):
-        self.bot.send_message(chat_id=message.chat.id, text=helper.helper[users_state[message.from_user.id]])
+        state = users_state[message.from_user.id]
+        self.bot.send_message(chat_id=message.chat.id,
+                              text=helper.helper[state],
+                              reply_markup=keyboards[state])
