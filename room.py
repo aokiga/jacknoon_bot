@@ -23,10 +23,10 @@ class Room:
         for c_id, m_id in self.status_messages.values():
             bot.edit_message_text(text=new_text, chat_id=c_id, message_id=m_id)
 
-    def add_player(self, player, message, game_id):
+    def add_player(self, player, message, room_id):
         self.players.update([(player.id, player)])
         self.status_messages.update([(player.id, (message.chat.id, message.message_id))])
-        users_room[player.id] = game_id
+        users_room[player.id] = room_id
         users_state[player.id] = UserState.ROOM
         self.update_status()
 
@@ -36,6 +36,11 @@ class Room:
         users_room[player_id] = 0
         users_state[player_id] = UserState.MAIN_MENU
         self.update_status()
+
+    def kick_player(self, player_id):
+        bot.send_message(chat_id=self.status_messages[player_id][0],
+                         text='Вы были кикнуты из комнаты,')
+        self.remove_player(player_id)
 
     def close_game(self):
         while len(self.players) != 0:
@@ -47,3 +52,8 @@ class Room:
 
     def empty(self):
         return not self.players
+
+    def say(self, message):
+        for c_id, _ in self.status_messages.values():
+            bot.send_message(chat_id=c_id,
+                             text='@' + message.from_user.username + ' кричит:\n' + message.text[5:])

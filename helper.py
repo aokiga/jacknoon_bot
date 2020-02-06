@@ -2,7 +2,7 @@ import random
 from userState import UserState
 
 
-def generate_id(rooms):
+def generate_id(rooms):  # i could also use mex() but i don't have much time for this
     key = 1
     while key in rooms:
         key = random.randint(1, 1e18)
@@ -12,16 +12,15 @@ def generate_id(rooms):
 helper = {
     UserState.MAIN_MENU: '''\
 Вы находитесь в главном меню.
-/help        - Список возможных команд
-/create_room - Создать комнату
-/enter_room  - Подключится к комнате 
-''', UserState.WAITING_FOR_ROOM_ID: '''\
-Введите Id комнаты, в которую хотите войти.
+/help            - Список возможных команд
+/create_room     - Создать комнату
+/enter_room <id> - Подключится к комнате
 ''', UserState.ROOM: '''\
 Вы находитесь в комнате
 /help       - Список возможных команд
 /leave_room - Выйти из комнаты. Если вы создали комнату и выходите из нее, то она уничтожится.
-''', UserState.WAITING_FOR_GAME_MODE: '''\
-Выберите режим игры.
+/begin      - Начать игру //TODO
+/say        - Отправить сообщение всем участникам
+/kick_user  - Исключить игрока из комнаты //TODO
 '''
 }

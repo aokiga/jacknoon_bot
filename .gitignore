@@ -2,3 +2,4 @@ master_info.py
 venv/
 .idea/
 __pycache__
+tmpbot.py
