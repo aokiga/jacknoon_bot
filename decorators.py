@@ -70,7 +70,7 @@ def for_users_election(func):
 def for_users_answer(func):
     def wrapped_handler(message):
         user_id = message.from_user.id
-        if users_state[user_id] == UserState.ANSWER:
+        if users_state[user_id] != UserState.ANSWER:
             return
         func(message)
 
@@ -90,7 +90,7 @@ def for_users_final_election(func):
 def for_users_final_answer(func):
     def wrapped_handler(message):
         user_id = message.from_user.id
-        if users_state[user_id] == UserState.FINAL_ANSWER:
+        if users_state[user_id] != UserState.FINAL_ANSWER:
             return
         func(message)
 

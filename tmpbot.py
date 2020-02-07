@@ -1,10 +1,12 @@
-from collections import defaultdict
+from collections import OrderedDict
 
-a = dict()
-a[31] = 24
-a[1] = 24
-a[2] = 24
-b = defaultdict()
-b.update([(1,[2]), (2,[3]), (3, [4])])
-b[1].append(12)
-print(b[1])
+score = OrderedDict([(1, 2), (3, 4), (2, 1)])
+
+results = ''
+
+score = OrderedDict(reversed(sorted(score.items(), key=(lambda x: x[1]))))
+print(score)
+for player_id, score in score.items():
+    results += str(score) + '\n'
+
+print(results)

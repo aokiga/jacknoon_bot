@@ -56,7 +56,7 @@ class Room:
         return not self.players
 
     def set_state(self, state):
-        for player_id, info in self.status_messages:
+        for player_id in self.players.keys():
             users_state[player_id] = state
 
     def send_message(self, text):

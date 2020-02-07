@@ -47,6 +47,7 @@ def help_bot(message):
 
 
 def say(message):
+    print('suka eblo')
     player_id = message.from_user.id
     room_id = users_room[player_id]
     rooms[room_id].send_message('@' + message.from_user.username + ' кричит:\n' + message.text[5:])
@@ -79,10 +80,22 @@ def put_voice(message):
 def final_answer(message):
     player_id = message.from_user.id
     room_id = users_room[player_id]
-    games[room_id].final_answer(player_id, message.text)
+    games[room_id].put_final_answer(player_id, message.text)
 
 
-def final_election(message):
+def final_voice(message):
     player_id = message.from_user.id
     room_id = users_room[player_id]
-    games[room_id].final_election(player_id, message.text)
+    games[room_id].put_final_voice(player_id, message.text)
+
+
+def parse_text(message):
+    player_id = message.from_user.id
+    if users_state[player_id] == UserState.ANSWER:
+        answer(message)
+    elif users_state[player_id] == UserState.ELECTION:
+        put_voice(message)
+    elif users_state[player_id] == UserState.FINAL_ANSWER:
+        final_answer(message)
+    elif users_state[player_id] == UserState.FINAL_ELECTION:
+        final_voice(message)
