@@ -65,6 +65,13 @@ def begin_game(message):
     command_handler.begin_game(message)
 
 
+@bot.message_handler(func=lambda message: True)
+@decorators.for_users
+@decorators.for_users_answer
+def answer(message):
+    command_handler.answer(message)
+
+
 if __name__ == '__main__':
     running = True
     while running:

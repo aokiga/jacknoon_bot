@@ -40,7 +40,6 @@ def for_users_game(func):
     def wrapped_handler(message):
         user_id = message.from_user.id
         if users_state[user_id] != UserState.GAME:
-            bot.send_message(chat_id=message.chat.id, text='Вы не находитесь в игре.')
             return
         func(message)
 
@@ -50,12 +49,33 @@ def for_users_game(func):
 def for_users_game_or_room(func):
     def wrapped_handler(message):
         user_id = message.from_user.id
-        if users_state[user_id] != UserState.GAME or users_state[user_id] != UserState.ROOM:
+        if users_state[user_id] == UserState.MAIN_MENU:
             bot.send_message(chat_id=message.chat.id, text='Вы не находитесь в игре.')
             return
         func(message)
 
     return wrapped_handler
+
+
+def for_users_election(func):
+    def wrapped_handler(message):
+        user_id = message.from_user.id
+        if users_state[user_id] != UserState.ELECTION:
+            return
+        func(message)
+
+    return wrapped_handler
+
+
+def for_users_answer(func):
+    def wrapped_handler(message):
+        user_id = message.from_user.id
+        if users_state[user_id] == UserState.ANSWER:
+            return
+        func(message)
+
+    return wrapped_handler
+
 
 
 def for_users_unregistered(func):

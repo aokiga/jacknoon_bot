@@ -55,9 +55,9 @@ class Room:
     def empty(self):
         return not self.players
 
-    def init_game(self):
+    def set_state(self, state):
         for player_id, info in self.status_messages:
-            users_state[player_id] = UserState.GAME
+            users_state[player_id] = state
 
     def send_message(self, text):
         for c_id, _ in self.status_messages.values():

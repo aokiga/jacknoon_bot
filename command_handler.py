@@ -5,7 +5,7 @@ from game_storage import game_storage as games
 from user_storage import users_room, users_state
 from room import Room
 from game import Game
-
+from userState import UserState
 
 def start(message):
     bot.send_message(chat_id=message.chat.id, text='Добро пожаловать в Jacknoon.')
@@ -57,5 +57,10 @@ def begin_game(message):
     games[room_id] = Game(rooms[room_id])
     games[room_id].play()
     games.pop(room_id)
+    rooms[room_id].set_state(UserState.ROOM)
 
 
+def answer(message):
+    player_id = message.from_user.id
+    room_id = users_room[player_id]
+    games[room_id].put_answer(player_id, message.text)
