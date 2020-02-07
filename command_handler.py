@@ -1,9 +1,10 @@
 import helper
 from bot_init import bot
 from room_storage import room_storage as rooms
+from game_storage import game_storage as games
 from user_storage import users_room, users_state
 from room import Room
-from keyboards import keyboards
+from game import Game
 
 
 def start(message):
@@ -41,11 +42,20 @@ def leave_room(message):
 def help_bot(message):
     state = users_state[message.from_user.id]
     bot.send_message(chat_id=message.chat.id,
-                     text=helper.helper[state],
-                     reply_markup=keyboards[state])
+                     text=helper.helper[state])
 
 
 def say(message):
     player_id = message.from_user.id
     room_id = users_room[player_id]
-    rooms[room_id].say(message)
+    rooms[room_id].send_message('@' + message.from_user.username + ' кричит:\n' + message.text[5:])
+
+
+def begin_game(message):
+    player_id = message.from_user.id
+    room_id = users_room[player_id]
+    games[room_id] = Game(rooms[room_id])
+    games[room_id].play()
+    games.pop(room_id)
+
+

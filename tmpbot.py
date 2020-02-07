@@ -1,12 +1,10 @@
-from bot_init import bot
+from collections import defaultdict
 
-
-@bot.message_handler(commands=['start'])
-def start(message):
-    bot.send_message(chat_id=message.chat.id, text=message.text[7:])
-
-
-if __name__ == '__main__':
-    running = True
-    while running:
-        bot.polling(none_stop=False)
+a = dict()
+a[31] = 24
+a[1] = 24
+a[2] = 24
+b = defaultdict()
+b.update([(1,[2]), (2,[3]), (3, [4])])
+b[1].append(12)
+print(b[1])

@@ -53,9 +53,16 @@ def leave_room(message):
 
 @bot.message_handler(commands=['say'])
 @decorators.for_users
-@decorators.for_users_room
+@decorators.for_users_game_or_room
 def say(message):
     command_handler.say(message)
+
+
+@bot.message_handler(commands=['begin_game'])
+@decorators.for_users
+@decorators.for_users_room
+def begin_game(message):
+    command_handler.begin_game(message)
 
 
 if __name__ == '__main__':

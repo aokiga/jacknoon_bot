@@ -1,1 +1,3 @@
-room_storage = dict()  # key: game_id; value: Room
+from collections import defaultdict
+
+room_storage = defaultdict()  # key: game_id; value: Room

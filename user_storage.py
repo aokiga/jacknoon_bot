@@ -1,2 +1,4 @@
-users_room = dict()
-users_state = dict()
+from collections import defaultdict
+
+users_room = defaultdict()
+users_state = defaultdict()

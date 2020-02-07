@@ -47,6 +47,17 @@ def for_users_game(func):
     return wrapped_handler
 
 
+def for_users_game_or_room(func):
+    def wrapped_handler(message):
+        user_id = message.from_user.id
+        if users_state[user_id] != UserState.GAME or users_state[user_id] != UserState.ROOM:
+            bot.send_message(chat_id=message.chat.id, text='Вы не находитесь в игре.')
+            return
+        func(message)
+
+    return wrapped_handler
+
+
 def for_users_unregistered(func):
     def wrapped_handler(message):
         user_id = message.from_user.id
@@ -56,3 +67,4 @@ def for_users_unregistered(func):
         func(message)
 
     return wrapped_handler
+

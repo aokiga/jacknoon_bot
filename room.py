@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from bot_init import bot
 from user_storage import users_room, users_state
 from userState import UserState
@@ -7,8 +9,8 @@ class Room:
 
     def __init__(self, room_id, owner_id):
         self.owner = owner_id
-        self.players = dict()
-        self.status_messages = dict()
+        self.players = defaultdict()
+        self.status_messages = defaultdict()
         self.state = 0
         self.id = room_id
 
@@ -53,7 +55,13 @@ class Room:
     def empty(self):
         return not self.players
 
-    def say(self, message):
+    def init_game(self):
+        for player_id, info in self.status_messages:
+            users_state[player_id] = UserState.GAME
+
+    def send_message(self, text):
         for c_id, _ in self.status_messages.values():
-            bot.send_message(chat_id=c_id,
-                             text='@' + message.from_user.username + ' кричит:\n' + message.text[5:])
+            bot.send_message(chat_id=c_id, text=text)
+
+    def send_user(self, player_id, text):
+        bot.send_message(chat_id=self.status_messages[player_id][0], text=text)
