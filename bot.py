@@ -72,6 +72,27 @@ def answer(message):
     command_handler.answer(message)
 
 
+@bot.message_handler(func=lambda message: True)
+@decorators.for_users
+@decorators.for_users_election
+def put_voice(message):
+    command_handler.put_voice(message)
+
+
+@bot.message_handler(func=lambda message: True)
+@decorators.for_users
+@decorators.for_users_final_answer
+def answer(message):
+    command_handler.final_answer(message)
+
+
+@bot.message_handler(func=lambda message: True)
+@decorators.for_users
+@decorators.for_users_final_election
+def answer(message):
+    command_handler.final_election(message)
+
+
 if __name__ == '__main__':
     running = True
     while running:

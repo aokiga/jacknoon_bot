@@ -7,6 +7,7 @@ from room import Room
 from game import Game
 from userState import UserState
 
+
 def start(message):
     bot.send_message(chat_id=message.chat.id, text='Добро пожаловать в Jacknoon.')
 
@@ -54,6 +55,9 @@ def say(message):
 def begin_game(message):
     player_id = message.from_user.id
     room_id = users_room[player_id]
+    if rooms[room_id].get_number_of_players() == 1:
+        rooms[room_id].send_message("Слишком мало игроков для создания игры.")
+        return
     games[room_id] = Game(rooms[room_id])
     games[room_id].play()
     games.pop(room_id)
@@ -64,3 +68,21 @@ def answer(message):
     player_id = message.from_user.id
     room_id = users_room[player_id]
     games[room_id].put_answer(player_id, message.text)
+
+
+def put_voice(message):
+    player_id = message.from_user.id
+    room_id = users_room[player_id]
+    games[room_id].put_voice(player_id, message.text)
+
+
+def final_answer(message):
+    player_id = message.from_user.id
+    room_id = users_room[player_id]
+    games[room_id].final_answer(player_id, message.text)
+
+
+def final_election(message):
+    player_id = message.from_user.id
+    room_id = users_room[player_id]
+    games[room_id].final_election(player_id, message.text)

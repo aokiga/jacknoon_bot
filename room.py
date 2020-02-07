@@ -65,3 +65,6 @@ class Room:
 
     def send_user(self, player_id, text):
         bot.send_message(chat_id=self.status_messages[player_id][0], text=text)
+
+    def get_number_of_players(self):
+        return len(self.players)

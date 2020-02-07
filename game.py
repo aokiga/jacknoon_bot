@@ -36,6 +36,9 @@ class Game:
         self.final_answers = defaultdict()
         self.e1 = []
         self.e2 = []
+        self.final_scoring = OrderedDict(map((lambda x: (x, 0)), self.room.players.keys()))
+        self.final_question = 0
+        self.medals_given = defaultdict()
 
     def wait(self):
         self.room.send_message('Осталось 90 секунд...')
@@ -63,17 +66,18 @@ class Game:
         for player_id in players:
             self.room.send_user(player_id, questions[self.player_questions[player_id][0]])
         self.wait()
+        self.room.set_state(UserState.GAME)
 
     def game_round(self, basic_score):
         self.common_answering()
         self.election(basic_score)
         self.current_questions = []
         self.player_questions = map((lambda x: (x, [])), self.room.players.keys())
+        self.player_answered = defaultdict()
 
     def final_round(self):
-        self.room.set_state(UserState.ANSWER)
-        qnum = random.randint(0, len(final_questions) - 1)
-        self.room.send_message(final_questions[qnum])
+        self.final_question = random.randint(0, len(final_questions) - 1)
+        self.room.send_message(final_questions[self.final_question])
         self.wait()
         self.final_election()
 
@@ -92,6 +96,21 @@ class Game:
         self.score[pl] += p
         return res
 
+    def put_answer(self, player_id, text):
+        if self.player_answered[player_id] == 2:
+            self.room.send_user(player_id, 'Вы уже ответили на все вопросы.')
+            return
+        if self.player_answered[player_id] == 1:
+            qnum = self.player_questions[player_id][1]
+            self.room.send_user(player_id, 'Спасибо за ответы.')
+            self.answers[(player_id, qnum)] = text
+            self.player_answered[player_id] += 1
+        if self.player_answered[player_id] == 0:
+            qnum = self.player_questions[player_id][0]
+            self.room.send_user(player_id, questions[self.player_questions[player_id][1]])
+            self.answers[(player_id, qnum)] = text
+            self.player_answered[player_id] += 1
+
     def election(self, basic_score):
         self.room.set_state(UserState.ELECTION)
         random.shuffle(self.current_questions)
@@ -105,24 +124,72 @@ class Game:
             self.e2 = []
             sleep(15)
             results = self.show_res_election(pl1, qnum, basic_score, self.e1) + \
-                      self.show_res_election(pl2, qnum, basic_score, self.e2)
+                self.show_res_election(pl2, qnum, basic_score, self.e2)
             self.room.send_message(results)
         self.room.set_state(UserState.GAME)
 
+    def get_final_answer(self, player_id):
+        if player_id in self.final_answers:
+            return self.final_answers[player_id]
+        else:
+            return "Нет ответа..."
+
     def final_election(self):
-        pass  # TODO()
+        self.room.set_state(UserState.FINAL_ELECTION)
+        self.room.send_message(final_questions[self.final_question])
+        sleep(3)
+        self.room.send_message('\n'.join(map((lambda ix: str(ix[0]) + ': ' + self.get_final_answer(ix[1])),
+                                             enumerate(self.score.keys()))))
+        self.room.send_message('Введите номер ответа, которому вы хотите отдать ЗОЛОТУЮ МЕДАЛЬ (3 ФП).')
+        sleep(20)
+        self.final_scoring = reversed(sorted(self.final_scoring, key=(lambda x: x[1])))
+        res = ''
+        n = len(self.score)
+        for i, player_id, score in enumerate(self.final_scoring):
+            self.score[player_id] += (n - i) * 500
+            res += '@' + self.room.players[player_id].username + ': ' + self.get_final_answer(player_id) + '\n' + \
+                score + ' ФП, + ' + str((n-i)*500) + 'points\n\n'
+        self.room.send_message(res)
+        self.room.set_state(UserState.GAME)
 
-    def put_answer(self):
-        pass  # TODO()
+    def put_final_voice(self, player_id, text):
+        if not text.isdigit() or int(text) > len(self.score):
+            return
+        voice = int(text)
+        players = list(self.score.keys())
+        if self.player_answered[player_id] == 3:
+            self.room.send_user(player_id, 'Вы уже отдали все медали.')
+            return
+        if self.player_answered[player_id] == 2:
+            self.final_scoring[players[voice]] += 1
+            self.room.send_user(player_id, 'Спасибо за медали.')
+        if self.player_answered[player_id] == 1:
+            self.final_scoring[players[voice]] += 2
+            self.room.send_user(player_id, 'Теперь выберите человека, которому мы дадите БРОНЗОВУЮ медаль (1 ФП).\n'
+                                           '(P.S не выбирайте, пожалуйста, одного и того же человека второй раз. '
+                                           'Скоро это пофикшу.')
+        if self.player_answered[player_id] == 0:
+            self.final_scoring[players[voice]] += 3
+            self.room.send_user(player_id, 'Теперь выберите человека, которому мы дадите СЕРЕБРЯНУЮ медаль (2 ФП).\n'
+                                           '(P.S не выбирайте, пожалуйста, одного и того же человека второй раз. '
+                                           'Скоро это пофикшу.')
 
-    def put_final_answer(self):
-        pass  # TODO()
+    def put_final_answer(self, player_id, text):
+        if player_id in self.final_answers:
+            return
+        self.final_answers[player_id] = text
+        self.room.send_user(player_id, 'Спасибо за ответы.')
 
-    def put_voice(self):
-        pass  # TODO()
-
-    def put_final_voice(self):
-        pass  # TODO()
+    def put_voice(self, player_id, text):
+        if text != '1' or text != '2':
+            self.room.send_user(self, player_id, 'Некорректный ввод. Введите 1 или 2')
+            return
+        if player_id in self.e1 or player_id in self.e2:
+            return
+        if text == '1':
+            self.e1.append(player_id)
+        if text == '2':
+            self.e2.append(player_id)
 
     def play(self):
         self.room.send_message(intro_message)
@@ -152,7 +219,7 @@ class Game:
 
     def show_results(self):
         results = 'Раунд подошел к концу.\nТекущие результаты:\n'
-        self.score = sorted(self.score)
+        self.score = reversed(sorted(self.score, key=(lambda x: x[1])))
         for player_id, score in self.score:
             results += '@' + self.room.players[player_id].username + ': ' + score + '\n'
         self.room.send_message(results)

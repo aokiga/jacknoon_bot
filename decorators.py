@@ -77,6 +77,25 @@ def for_users_answer(func):
     return wrapped_handler
 
 
+def for_users_final_election(func):
+    def wrapped_handler(message):
+        user_id = message.from_user.id
+        if users_state[user_id] != UserState.FINAL_ELECTION:
+            return
+        func(message)
+
+    return wrapped_handler
+
+
+def for_users_final_answer(func):
+    def wrapped_handler(message):
+        user_id = message.from_user.id
+        if users_state[user_id] == UserState.FINAL_ANSWER:
+            return
+        func(message)
+
+    return wrapped_handler
+
 
 def for_users_unregistered(func):
     def wrapped_handler(message):
