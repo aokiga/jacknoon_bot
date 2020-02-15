@@ -1,7 +1,7 @@
 # jacknoon_bot
 Simulation of Jackbox game using Telegram bot
  
-#Usage:
+# Usage:
 To use this bot you should:
 1) Get BOT_TOKEN from Bot Father 
 2) Get to master_info.py and replace 'token' with your BOT_TOKEN \
@@ -13,7 +13,7 @@ To use this bot you should:
 4) Launch 
 5) ...
 6) PROFIT!
-#TODO:
+# TODO:
 1) Refactor the code    
 2) Add /kick_user and settings menu   
 3) Implement basic question bank.
