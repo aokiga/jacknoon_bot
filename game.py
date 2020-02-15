@@ -4,15 +4,14 @@ from questions_sabbath import questions, final_questions
 import random
 from userState import UserState
 
-intro_message = 'Добро пожаловать в игру Jacknoon.\nЗдесь нужно добавить красивое intro_message, но мне похуй, ' \
-                'реально.\n' \
+intro_message = 'Добро пожаловать в игру Jacknoon.\nЗдесь нужно добавить красивое intro_message\n' \
                 'В этом раунде Вам будут даны два вопроса и вы должны наиболее \'смешно\'(лол, нет) на них ' \
                 'ответить.\nПосле этого игроки будут голосовать за лучший ответ. '
-round_message = 'В этом раунде будут серьезные перемены в правилах. Он такой же, но очков в два.сука.раза ' \
+round_message = 'В этом раунде будут серьезные перемены в правилах. Он такой же, но очков в два.раза ' \
                  'больше.\nПогнали. '
 final_round_message = 'Игра почти подошла к концу, но еще не все потеряно! Можно потерять еще больше! В финальном ' \
                       'раунде всем игрокам надо будет ответить на один вопрос.\n Поехали. '
-final_message = 'Игра закончена.\n Всем спасибо за внимание.\nИ, да, у нас есть победитель (главный еблан) и это - '
+final_message = 'Игра закончена.\n Всем спасибо за внимание.\nИ, да, у нас есть победитель и это - '
 
 used_questions = set()
 
@@ -142,7 +141,7 @@ class Game:
             self.e1 = []
             self.e2 = []
             self.ready = set()
-            self._wait(15)
+            self._wait(30)
             results = self.show_res_election(pl1, qnum, basic_score, self.e1) + \
                       self.show_res_election(pl2, qnum, basic_score, self.e2)
             self.room.send_message(results)
@@ -162,7 +161,7 @@ class Game:
                                              enumerate(self.score.keys()))))
         self.room.send_message('Введите номер ответа, которому вы хотите отдать ЗОЛОТУЮ МЕДАЛЬ (3 ФП).')
         self.ready = set()
-        self._wait(20)
+        self._wait(80)
         self.final_scoring = OrderedDict(reversed(sorted(self.final_scoring.items(), key=(lambda x: x[1]))))
         res = ''
         n = len(self.score)
@@ -191,14 +190,12 @@ class Game:
         if self.player_answered[player_id] == 1:
             self.final_scoring[players[voice]] += 2
             self.room.send_user(player_id, 'Теперь выберите человека, которому мы дадите БРОНЗОВУЮ медаль (1 ФП).\n'
-                                           '(P.S не выбирайте, пожалуйста, одного и того же человека второй раз. '
-                                           'Скоро это пофикшу.')
+                                           '(P.S не выбирайте, пожалуйста, одного и того же человека второй раз. ')
             self.player_answered[player_id] += 1
         if self.player_answered[player_id] == 0:
             self.final_scoring[players[voice]] += 3
             self.room.send_user(player_id, 'Теперь выберите человека, которому мы дадите СЕРЕБРЯНУЮ медаль (2 ФП).\n'
-                                           '(P.S не выбирайте, пожалуйста, одного и того же человека второй раз. '
-                                           'Скоро это пофикшу.')
+                                           '(P.S не выбирайте, пожалуйста, одного и того же человека второй раз.')
             self.player_answered[player_id] += 1
 
     def put_final_answer(self, player_id, text):
@@ -222,21 +219,21 @@ class Game:
 
     def play(self):
         self.room.send_message(intro_message)
-        sleep(2)
+        sleep(5)
         self.game_round(1000)
-        sleep(2)
+        sleep(5)
         self.show_results()
-        sleep(2)
+        sleep(5)
         self.room.send_message(round_message)
-        sleep(2)
+        sleep(5)
         self.game_round(2000)
-        sleep(2)
+        sleep(5)
         self.show_results()
-        sleep(2)
+        sleep(5)
         self.room.send_message(final_round_message)
-        sleep(2)
+        sleep(5)
         self.final_round()
-        sleep(2)
+        sleep(5)
         self.show_results()
         self.room.send_message(final_message + self.choose_winner())
 
