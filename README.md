@@ -1,4 +1,4 @@
-# jackbox_bot
+# jacknoon_bot
 Simulation of Jackbox game using Telegram bot
 
 ####TODO:
