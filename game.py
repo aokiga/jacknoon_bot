@@ -1,6 +1,6 @@
 from collections import OrderedDict, defaultdict
 from time import sleep
-from questions_sabbath import questions, final_questions
+from question import questions, final_questions
 import random
 from userState import UserState
 

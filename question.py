@@ -1,13 +1,11 @@
 questions = [
-    'tmp question',
-    'mem',
-    'govno',
-    'a',
-    'b',
-    'c',
-    'd'
+    'put',
+    'here',
+    'your',
+    'questions'
 ]
 
 final_questions = [
-    'govno'
+    'final',
+    'questions'
 ]

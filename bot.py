@@ -1,8 +1,5 @@
 from bot_init import bot
 import decorators
-from userState import UserState
-from user_storage import users_room, users_state
-from room_storage import room_storage as rooms
 
 import command_handler
 
@@ -10,9 +7,6 @@ import command_handler
 @bot.message_handler(commands=['start'])
 @decorators.for_users_unregistered
 def start(message):
-    player_id = message.from_user.id
-    users_state[player_id] = UserState.MAIN_MENU
-    users_room[player_id] = 0
     command_handler.start(message)
     help_handler(message)
 
@@ -35,11 +29,7 @@ def create_game(message):
 @decorators.for_users
 @decorators.for_users_free
 def connect(message):
-    room_id = message.text[12::]
-    if room_id not in rooms:
-        bot.send_message(chat_id=message.chat.id, text='Некорректный id комнаты.')
-        return
-    command_handler.find_room(message, room_id)
+    command_handler.wait_for_id(message)
     help_handler(message)
 
 

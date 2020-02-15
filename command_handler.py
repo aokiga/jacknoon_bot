@@ -9,12 +9,23 @@ from userState import UserState
 
 
 def start(message):
+    player_id = message.from_user.id
+    users_state[player_id] = UserState.MAIN_MENU
+    users_room[player_id] = 0
     bot.send_message(chat_id=message.chat.id, text='Добро пожаловать в Jacknoon.')
 
 
-def find_room(message, room_id):
+def find_room(message):
+    room_id = message.text
+    player_id = message.from_user.id
+    if room_id not in rooms:
+        bot.send_message(chat_id=message.chat.id, text='Некорректный id комнаты.')
+        users_state[player_id] = UserState.MAIN_MENU
+        help_bot(message)
+        return
     bot.send_message(chat_id=message.chat.id, text='Вы вошли в комнату ' + str(room_id))
     _enter_room(message, room_id)
+    help_bot(message)
 
 
 def create_room(message):
@@ -47,7 +58,6 @@ def help_bot(message):
 
 
 def say(message):
-    print('suka eblo')
     player_id = message.from_user.id
     room_id = users_room[player_id]
     rooms[room_id].send_message('@' + message.from_user.username + ' кричит:\n' + message.text[5:])
@@ -91,7 +101,9 @@ def final_voice(message):
 
 def parse_text(message):
     player_id = message.from_user.id
-    if users_state[player_id] == UserState.ANSWER:
+    if users_state[player_id] == UserState.ID:
+        find_room(message)
+    elif users_state[player_id] == UserState.ANSWER:
         answer(message)
     elif users_state[player_id] == UserState.ELECTION:
         put_voice(message)
@@ -99,3 +111,8 @@ def parse_text(message):
         final_answer(message)
     elif users_state[player_id] == UserState.FINAL_ELECTION:
         final_voice(message)
+
+
+def wait_for_id(message):
+    player_id = message.from_user.id
+    users_state[player_id] = UserState.ID

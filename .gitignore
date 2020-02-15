@@ -2,6 +2,3 @@ master_info.py
 venv/
 .idea/
 __pycache__
-tmpbot.py
-questions_sabbath.py
-questions_10.py

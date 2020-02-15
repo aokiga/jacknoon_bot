@@ -3,6 +3,7 @@ from enum import Enum, auto
 
 class UserState(Enum):
     MAIN_MENU = auto()
+    ID = auto()
     ROOM = auto()
     GAME = auto()
     ELECTION = auto()
